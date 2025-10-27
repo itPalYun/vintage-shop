@@ -12,14 +12,14 @@ Place these files in /admin and /content
   <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 </head>
 <body>
-  <!-- Подключаем Netlify Identity -->
+  <!-- Netlify Identity -->
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
-  <!-- Static CMS (локальный модуль) -->
-  <script type="module">
-    import * as CMS from './cms/static-cms-app.js'; // импортируем все именованные экспорты
+  <!-- Static CMS локально -->
+  <script src="./cms/static-cms-app.js"></script>
 
-    // Если пользователь пришёл по invite_token — показать форму регистрации
+  <script>
+    // Показываем регистрацию, если юзер по invite_token
     if (window.location.hash.includes('invite_token')) {
       console.log("🔐 Invite token detected — opening Netlify Identity widget...");
       netlifyIdentity.on('init', user => {
@@ -27,43 +27,48 @@ Place these files in /admin and /content
       });
     }
 
-    // Конфигурация CMS
-    const config = {
-      backend: {
-        name: 'git-gateway',
-        branch: 'main',
-      },
-      locale: 'ru',
-      media_folder: 'assets/uploads',
-      public_folder: '/assets/uploads',
-      collections: [
-        {
-          name: 'products',
-          label: 'Товары',
-          label_singular: 'Товар',
-          files: [
-            {
-              file: 'content/products.json',
-              name: 'products_file',
-              label: 'Каталог',
-              fields: [
-                { label: 'Название', name: 'title', widget: 'string' },
-                { label: 'Цена', name: 'price', widget: 'number' },
-                { label: 'Описание', name: 'short', widget: 'text', required: false },
-                { label: 'Изображение', name: 'image', widget: 'image' },
-              ],
+    // Ждём, пока StaticCmsApp прогрузится
+    function initCMSWhenReady() {
+      if (window.StaticCmsApp && typeof window.StaticCmsApp.init === 'function') {
+        console.log('✅ Static CMS загружен. Инициализация...');
+        window.StaticCmsApp.init({
+          config: {
+            backend: {
+              name: 'git-gateway',
+              branch: 'main',
             },
-          ],
-        },
-      ],
-    };
-
-    console.log('✅ Static CMS загружен. Инициализация...');
-    if (CMS.init && typeof CMS.init === 'function') {
-      CMS.init({ config });
-    } else {
-      console.error('❌ CMS.init не найдена. Проверь экспорт.');
+            locale: 'ru',
+            media_folder: 'assets/uploads',
+            public_folder: '/assets/uploads',
+            collections: [
+              {
+                name: 'products',
+                label: 'Товары',
+                label_singular: 'Товар',
+                files: [
+                  {
+                    file: 'content/products.json',
+                    name: 'products_file',
+                    label: 'Каталог',
+                    fields: [
+                      { label: 'Название', name: 'title', widget: 'string' },
+                      { label: 'Цена', name: 'price', widget: 'number' },
+                      { label: 'Описание', name: 'short', widget: 'text', required: false },
+                      { label: 'Изображение', name: 'image', widget: 'image' },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        });
+      } else {
+        console.log('⏳ Ожидание загрузки StaticCmsApp...');
+        setTimeout(initCMSWhenReady, 200);
+      }
     }
+
+    initCMSWhenReady();
   </script>
 </body>
 </html>
