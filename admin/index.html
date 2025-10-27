@@ -12,16 +12,14 @@ Place these files in /admin and /content
   <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 </head>
 <body>
-  <!-- ✅ Подключаем Netlify Identity -->
+  <!-- Подключаем Netlify Identity -->
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
-  <!-- ✅ Подключаем локальный Static CMS -->
-  <script src="./cms/static-cms-app.js"></script>
+  <!-- Static CMS подключаем как модуль -->
+  <script type="module">
+    import CMS from './cms/static-cms-app.js'; // путь к твоему файлу
 
-  <script>
-    window.CMS_MANUAL_INIT = true;
-
-    // 🔐 Показываем окно регистрации/входа, если пользователь пришёл по invite_token
+    // Показываем окно регистрации/входа, если есть invite_token
     if (window.location.hash.includes('invite_token')) {
       console.log("🔐 Invite token detected — opening Netlify Identity widget...");
       netlifyIdentity.on('init', user => {
@@ -29,9 +27,12 @@ Place these files in /admin and /content
       });
     }
 
-    // ⚙️ Конфигурация Static CMS
+    // Конфигурация CMS
     const config = {
-      backend: { name: 'git-gateway', branch: 'main' },
+      backend: {
+        name: 'git-gateway',
+        branch: 'main',
+      },
       locale: 'ru',
       media_folder: 'assets/uploads',
       public_folder: '/assets/uploads',
@@ -40,56 +41,16 @@ Place these files in /admin and /content
           name: 'products',
           label: 'Товары',
           label_singular: 'Товар',
-          delete: false,
-          editor: { preview: false },
           files: [
             {
               file: 'content/products.json',
               name: 'products_file',
               label: 'Каталог',
               fields: [
-                {
-                  label: 'Товары',
-                  name: 'products',
-                  widget: 'list',
-                  summary: '{{fields.title}} ({{fields.category}} — {{fields.price}})',
-                  fields: [
-                    { label: 'Название', name: 'title', widget: 'string' },
-                    { label: 'Артикул', name: 'sku', widget: 'string', required: false },
-                    {
-                      label: 'Категория',
-                      name: 'category',
-                      widget: 'select',
-                      options: [
-                        { label: 'Тарелки', value: 'plates' },
-                        { label: 'Чайные сервизы', value: 'tea' },
-                        { label: 'Стекло', value: 'glass' },
-                        { label: 'Серебро', value: 'silver' },
-                      ],
-                    },
-                    {
-                      label: 'Цена',
-                      name: 'price',
-                      widget: 'number',
-                      value_type: 'float',
-                      min: 0,
-                      required: false,
-                    },
-                    { label: 'Краткое описание', name: 'short', widget: 'text', required: false },
-                    { label: 'Описание', name: 'description', widget: 'markdown', required: false },
-                    { label: 'Изображение', name: 'image', widget: 'image' },
-                    {
-                      label: 'Статус',
-                      name: 'status',
-                      widget: 'select',
-                      options: [
-                        { label: 'В наличии', value: 'available' },
-                        { label: 'Продано', value: 'sold' },
-                      ],
-                      default: 'available',
-                    },
-                  ],
-                },
+                { label: 'Название', name: 'title', widget: 'string' },
+                { label: 'Цена', name: 'price', widget: 'number' },
+                { label: 'Описание', name: 'short', widget: 'text', required: false },
+                { label: 'Изображение', name: 'image', widget: 'image' },
               ],
             },
           ],
@@ -97,18 +58,8 @@ Place these files in /admin and /content
       ],
     };
 
-    // ⏳ Ждём загрузку CMS перед инициализацией
-    function initCMSWhenReady() {
-      if (window.StaticCms && typeof window.StaticCms.init === 'function') {
-        console.log('✅ Static CMS готов, инициализация...');
-        window.StaticCms.init({ config });
-      } else {
-        console.log('⏳ Ожидание загрузки Static CMS...');
-        setTimeout(initCMSWhenReady, 200);
-      }
-    }
-
-    initCMSWhenReady();
+    console.log('✅ Static CMS загружен. Инициализация...');
+    CMS.init({ config });
   </script>
 </body>
 </html>
