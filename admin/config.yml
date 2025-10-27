@@ -1,0 +1,45 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+collections:
+  - name: "products"
+    label: "Товары"
+    label_singular: "Товар"
+    delete: false
+    editor:
+      preview: false
+    files:
+      - file: "content/products.json"
+        name: "products_file"
+        label: "Каталог"
+        fields:
+          - label: "Товары"
+            name: "products"
+            widget: "list"
+            summary: "{{fields.title}} ({{fields.category}} — {{fields.price}})"
+            fields:
+              - { label: "Название", name: "title", widget: "string" }
+              - { label: "Артикул", name: "sku", widget: "string", required: false }
+              - label: "Категория"
+                name: "category"
+                widget: "select"
+                options:
+                  - { label: "Тарелки", value: "plates" }
+                  - { label: "Чайные сервизы", value: "tea" }
+                  - { label: "Стекло", value: "glass" }
+                  - { label: "Серебро", value: "silver" }
+              - { label: "Цена", name: "price", widget: "number", value_type: "float", min: 0, required: false }
+              - { label: "Краткое описание", name: "short", widget: "text", required: false }
+              - { label: "Описание", name: "description", widget: "markdown", required: false }
+              - { label: "Изображение", name: "image", widget: "image" }
+              - label: "Статус"
+                name: "status"
+                widget: "select"
+                options:
+                  - { label: "В наличии", value: "available" }
+                  - { label: "Продано", value: "sold" }
+                default: "available"
