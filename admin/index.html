@@ -15,10 +15,11 @@ Place these files in /admin and /content
   <!-- Подключаем Netlify Identity -->
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
-  <!-- Static CMS (модульное подключение) -->
+  <!-- Static CMS (локальный модуль) -->
   <script type="module">
-    import * as CMS from './cms/static-cms-app.js'; // <- поменяли импорт
+    import * as CMS from './cms/static-cms-app.js'; // импортируем все именованные экспорты
 
+    // Если пользователь пришёл по invite_token — показать форму регистрации
     if (window.location.hash.includes('invite_token')) {
       console.log("🔐 Invite token detected — opening Netlify Identity widget...");
       netlifyIdentity.on('init', user => {
@@ -26,6 +27,7 @@ Place these files in /admin and /content
       });
     }
 
+    // Конфигурация CMS
     const config = {
       backend: {
         name: 'git-gateway',
@@ -57,10 +59,10 @@ Place these files in /admin and /content
     };
 
     console.log('✅ Static CMS загружен. Инициализация...');
-    if (CMS && CMS.init) {
+    if (CMS.init && typeof CMS.init === 'function') {
       CMS.init({ config });
     } else {
-      console.error('❌ CMS.init не найден. Проверь экспорт в static-cms-app.js');
+      console.error('❌ CMS.init не найдена. Проверь экспорт.');
     }
   </script>
 </body>
