@@ -12,21 +12,34 @@ Place these files in /admin and /content
   <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 </head>
 <body>
-  <!-- Подключаем Static CMS с jsDelivr (стабильный источник) -->
+  <!-- Подключаем Netlify Identity -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+  <!-- Static CMS (с jsDelivr) -->
   <script src="https://cdn.jsdelivr.net/npm/@staticcms/app@3.2.1/dist/static-cms-app.js"></script>
 
   <script>
     window.CMS_MANUAL_INIT = true;
 
+    // Показываем окно регистрации/входа, если пользователь пришёл по invite_token
+    if (window.location.hash.includes('invite_token')) {
+      console.log("🔐 Invite token detected — opening Netlify Identity widget...");
+      netlifyIdentity.on('init', user => {
+        if (!user) {
+          netlifyIdentity.open('signup');
+        }
+      });
+    }
+
+    // Конфигурация Static CMS
     const config = {
       backend: {
-        name: 'git-gateway', // для Netlify Identity
+        name: 'git-gateway',
         branch: 'main',
       },
       locale: 'ru',
       media_folder: 'assets/uploads',
       public_folder: '/assets/uploads',
-
       collections: [
         {
           name: 'products',
@@ -89,7 +102,7 @@ Place these files in /admin and /content
       ],
     };
 
-    // 💡 Функция безопасной инициализации CMS
+    // Ждём загрузку CMS
     function initCMSWhenReady() {
       if (window.StaticCms && typeof window.StaticCms.init === 'function') {
         console.log('✅ Static CMS готов, инициализация...');
@@ -99,7 +112,6 @@ Place these files in /admin and /content
         setTimeout(initCMSWhenReady, 100);
       }
     }
-
     initCMSWhenReady();
   </script>
 </body>
