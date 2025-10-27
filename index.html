@@ -1,0 +1,80 @@
+<!--
+Vintage Treasures – Static Shop Template
+- Tech: HTML + Tailwind (CDN) + Static CMS (admin) + JSON data
+- Orders: Redirect to Telegram with prefilled message (no online payments)
+- CMS: content/products.json editable in /admin
+- Hosting: Netlify (recommended). Works on any static host.
+-->
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vintage Treasures — Магазин винтажной посуды</title>
+<meta name="description" content="Винтажные тарелки, чайные сервизы, стекло и серебро. Элегантная коллекция с ценами и оформлением заказа через Telegram." />
+
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+
+<!-- Tailwind (CDN) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+'vintage-blue': '#4A90A4',
+'soft-blue': '#7BB3C0',
+'cream': '#F8F6F0',
+'warm-gray': '#8B8680',
+'charcoal': '#2C2C2C'
+},
+fontFamily: {
+serif: ['\"Playfair Display\"', 'serif'],
+sans: ['Inter', 'ui-sans-serif', 'system-ui']
+},
+boxShadow: {
+soft: '0 10px 30px rgba(0,0,0,0.08)'
+}
+}
+}
+}
+</script>
+<style>
+body { font-feature-settings: 'kern' 1; }
+.hero-pattern { background-image: radial-gradient(circle at 1px 1px, rgba(74,144,164,.08) 1px, transparent 0); background-size: 38px 38px; }
+.fade-in { opacity: 0; transform: translateY(12px); transition: all .5s ease-out; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body class="bg-white text-charcoal font-sans">
+<!-- Config (EDIT THESE) -->
+<script>
+// 👉 Укажи свой ник/бот Telegram (без @)
+const TELEGRAM_USERNAME = '@ilias_ts';
+// 👉 Валюта (отображение)
+const CURRENCY = '€';
+</script>
+
+
+<!-- Navbar -->
+<nav class="fixed inset-x-0 top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+<a href="#home" class="flex items-center gap-2">
+<svg class="w-7 h-7 text-vintage-blue" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 100 20 10 10 0 000-20Zm1 5a1 1 0 110 2h-2v2h2a1 1 0 110 2h-2v3a1 1 0 11-2 0V7a1 1 0 011-1h3Z"/></svg>
+<span class="font-serif text-xl font-semibold">Vintage Treasures</span>
+</a>
+<button id="menuBtn" class="md:hidden p-2 rounded hover:bg-cream" aria-label="Открыть меню">
+<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+</button>
+<div id="menu" class="hidden md:flex items-center gap-6">
+<a href="#catalog" class="hover:text-vintage-blue">Каталог</a>
+<a href="#about" class="hover:text-vintage-blue">О нас</a>
+<a href="#contact" class="hover:text-vintage-blue">Контакты</a>
+</div>
+</div>
+<div id="mobileMenu" class="md:hidden hidden border-t border-gray-100">
+<div class="px-4 py-3 space-y-2">
+</html>

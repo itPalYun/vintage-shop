@@ -1,0 +1,45 @@
+
+{
+"products": [
+{
+"title": "Victorian Dinner Plates, set of 6",
+"sku": "PL-1890-06",
+"category": "plates",
+"price": 285,
+"short": "Элегантные фарфоровые тарелки 1890-х годов",
+"description": "Сохранившиеся в отличном состоянии, тонкий фарфор, деликатный рисунок.",
+"image": "assets/uploads/plates-victorian.jpg",
+"status": "available"
+},
+{
+"title": "Art Deco Tea Set, for 8",
+"sku": "TS-1920-08",
+"category": "tea",
+"price": 450,
+"short": "Полный чайный сервиз 1920-х годов",
+"description": "Порцелян, геометрические узоры, стиль ар-деко.",
+"image": "assets/uploads/tea-deco.jpg",
+"status": "available"
+},
+{
+"title": "Bohemian Crystal Glasses, 6 pcs",
+"sku": "GL-1950-06",
+"category": "glass",
+"price": 195,
+"short": "Ручная огранка, Богемия, 1950-е",
+"description": "Набор бокалов в идеальном состоянии.",
+"image": "assets/uploads/crystal.jpg",
+"status": "available"
+},
+{
+"title": "Sterling Silver Tray",
+"sku": "SV-1935-TR",
+"category": "silver",
+"price": 620,
+"short": "Серебряный поднос, 1930-е",
+"description": "Маркировка 925, винтажная патина.",
+"image": "assets/uploads/silver-tray.jpg",
+"status": "sold"
+}
+]
+}
