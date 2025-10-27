@@ -9,18 +9,18 @@ Place these files in /admin and /content
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Админка — Vintage Treasures</title>
-  <link rel="preconnect" href="https://unpkg.com" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 </head>
 <body>
-  <!-- Подключаем Static CMS -->
-  <script src="https://unpkg.com/@staticcms/app@^3.0.0/dist/static-cms-app.js"></script>
+  <!-- Подключаем Static CMS с jsDelivr (стабильный источник) -->
+  <script src="https://cdn.jsdelivr.net/npm/@staticcms/app@3.2.1/dist/static-cms-app.js"></script>
 
   <script>
     window.CMS_MANUAL_INIT = true;
 
     const config = {
       backend: {
-        name: 'git-gateway', // или 'github', если без Netlify Identity
+        name: 'git-gateway', // для Netlify Identity
         branch: 'main',
       },
       locale: 'ru',
@@ -96,7 +96,7 @@ Place these files in /admin and /content
         window.StaticCms.init({ config });
       } else {
         console.log('⏳ Ожидание загрузки Static CMS...');
-        setTimeout(initCMSWhenReady, 100); // проверяем каждые 100 мс
+        setTimeout(initCMSWhenReady, 100);
       }
     }
 
