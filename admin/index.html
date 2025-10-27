@@ -3,80 +3,98 @@ ADMIN PANEL (Static CMS)
 Place these files in /admin and /content
 ========================= -->
 
-<!-- /admin/index.html -->
-<!-- Put this file at: admin/index.html -->
-<!-- This is a minimal Static CMS (ex Netlify CMS) setup that edits content/products.json -->
-<!-- Uses Git Gateway on Netlify (Identity) or GitHub backend. -->
-
-
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Админка — Vintage Treasures</title>
-<link rel="preconnect" href="https://unpkg.com" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админка — Vintage Treasures</title>
+  <link rel="preconnect" href="https://unpkg.com" />
 </head>
 <body>
-<script src="https://unpkg.com/@staticcms/app@^3.0.0/dist/static-cms-app.js"></script>
-<script>
-window.CMS_MANUAL_INIT = true;
-</script>
-<script>
-// Initialize Static CMS
-const config = {
-backend: {
-name: 'git-gateway', // on Netlify; or 'github' for GitHub backend
-branch: 'main',
-},
-locale: 'ru',
-media_folder: 'assets/uploads',
-public_folder: '/assets/uploads',
-collections: [
-{
-name: 'products',
-label: 'Товары',
-label_singular: 'Товар',
-delete: false,
-editor: { preview: false },
-files: [
-{
-file: 'content/products.json',
-name: 'products_file',
-label: 'Каталог',
-fields: [
-{
-label: 'Товары', name: 'products', widget: 'list', summary: '{{fields.title}} ({{fields.category}} — {{fields.price}})',
-fields: [
-{ label: 'Название', name: 'title', widget: 'string' },
-{ label: 'Артикул', name: 'sku', widget: 'string', required: false },
-{ label: 'Категория', name: 'category', widget: 'select', options: [
-{ label: 'Тарелки', value: 'plates' },
-{ label: 'Чайные сервизы', value: 'tea' },
-{ label: 'Стекло', value: 'glass' },
-{ label: 'Серебро', value: 'silver' }
-]},
-{ label: 'Цена', name: 'price', widget: 'number', value_type: 'float', min: 0, required: false },
-{ label: 'Краткое описание', name: 'short', widget: 'text', required: false },
-{ label: 'Описание', name: 'description', widget: 'markdown', required: false },
-{ label: 'Изображение', name: 'image', widget: 'image' },
-{ label: 'Статус', name: 'status', widget: 'select', options: [
-{ label: 'В наличии', value: 'available' },
-{ label: 'Продано', value: 'sold' }
-], default: 'available' }
-]
-}
-]
-}
-]
-}
-]
-};
 
+  <!-- Static CMS -->
+  <script src="https://unpkg.com/@staticcms/app@^3.0.0/dist/static-cms-app.js"></script>
+  <script>
+    window.CMS_MANUAL_INIT = true;
 
-window.StaticCms.init({ config });
-</script>
+    // Запускаем CMS только после загрузки страницы
+    window.addEventListener('load', function () {
+      const config = {
+        backend: {
+          name: 'git-gateway', // используем Netlify Identity + Git Gateway
+          branch: 'main',
+        },
+        locale: 'ru',
+        media_folder: 'assets/uploads',
+        public_folder: '/assets/uploads',
+
+        collections: [
+          {
+            name: 'products',
+            label: 'Товары',
+            label_singular: 'Товар',
+            delete: false,
+            editor: { preview: false },
+            files: [
+              {
+                file: 'content/products.json',
+                name: 'products_file',
+                label: 'Каталог',
+                fields: [
+                  {
+                    label: 'Товары',
+                    name: 'products',
+                    widget: 'list',
+                    summary: '{{fields.title}} ({{fields.category}} — {{fields.price}})',
+                    fields: [
+                      { label: 'Название', name: 'title', widget: 'string' },
+                      { label: 'Артикул', name: 'sku', widget: 'string', required: false },
+                      {
+                        label: 'Категория',
+                        name: 'category',
+                        widget: 'select',
+                        options: [
+                          { label: 'Тарелки', value: 'plates' },
+                          { label: 'Чайные сервизы', value: 'tea' },
+                          { label: 'Стекло', value: 'glass' },
+                          { label: 'Серебро', value: 'silver' }
+                        ]
+                      },
+                      {
+                        label: 'Цена',
+                        name: 'price',
+                        widget: 'number',
+                        value_type: 'float',
+                        min: 0,
+                        required: false
+                      },
+                      { label: 'Краткое описание', name: 'short', widget: 'text', required: false },
+                      { label: 'Описание', name: 'description', widget: 'markdown', required: false },
+                      { label: 'Изображение', name: 'image', widget: 'image' },
+                      {
+                        label: 'Статус',
+                        name: 'status',
+                        widget: 'select',
+                        options: [
+                          { label: 'В наличии', value: 'available' },
+                          { label: 'Продано', value: 'sold' }
+                        ],
+                        default: 'available'
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      };
+
+      // ✅ Инициализируем CMS после полной загрузки
+      window.StaticCms.init({ config });
+    });
+  </script>
+
 </body>
 </html>
-
