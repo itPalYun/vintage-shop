@@ -360,5 +360,14 @@ Vintage Treasures – Static Shop Template
     loadProducts();
     qs('#year').textContent = new Date().getFullYear();
   </script>
+  <!-- Netlify Identity Widget (для регистрации пользователей CMS) -->
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+<script>
+  // Если пользователь пришёл по приглашению — перенаправляем его на /admin
+  if (window.location.hash.includes('invite_token')) {
+    window.location.href = '/admin/';
+  }
+</script>
 </body>
 </html>
