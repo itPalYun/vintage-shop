@@ -1,3 +1,10 @@
+<!--
+Vintage Treasures – Static Shop Template
+- Tech: HTML + Tailwind (CDN) + Static CMS (admin) + JSON data
+- Orders: Redirect to Telegram with prefilled message (no online payments)
+- CMS: content/products.json editable in /admin
+- Hosting: Netlify (recommended). Works on any static host.
+-->
 <!DOCTYPE html>
 <html lang="ru" class="scroll-smooth">
 <head>
@@ -5,7 +12,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vintage Treasures — Магазин винтажной посуды</title>
   <meta name="description" content="Винтажные тарелки, чайные сервизы, стекло и серебро. Элегантная коллекция с ценами и оформлением заказа через Telegram." />
+
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -19,8 +30,11 @@
             'charcoal': '#2C2C2C'
           },
           fontFamily: {
-            serif: ['"Playfair Display"', 'serif'],
+            serif: ['\"Playfair Display\"', 'serif'],
             sans: ['Inter', 'ui-sans-serif', 'system-ui']
+          },
+          boxShadow: {
+            soft: '0 10px 30px rgba(0,0,0,0.08)'
           }
         }
       }
@@ -34,50 +48,317 @@
   </style>
 </head>
 <body class="bg-white text-charcoal font-sans">
+  <!-- Config (EDIT THESE) -->
+  <script>
+    // 👉 Укажи свой ник/бот Telegram (без @)
+    const TELEGRAM_USERNAME = 'your_telegram_username';
+    // 👉 Валюта (отображение)
+    const CURRENCY = '€';
+  </script>
 
-<!-- Navbar -->
-<nav class="fixed inset-x-0 top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-    <a href="#home" class="flex items-center gap-2">
-      <svg class="w-7 h-7 text-vintage-blue" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20Zm1 5a1 1 0 110 2h-2v2h2a1 1 0 110 2h-2v3a1 1 0 11-2 0V7a1 1 0 011-1h3Z"/></svg>
-      <span class="font-serif text-xl font-semibold">Vintage Treasures</span>
-    </a>
-    <button id="menuBtn" class="md:hidden p-2 rounded hover:bg-cream" aria-label="Открыть меню">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-    </button>
-    <div id="menu" class="hidden md:flex items-center gap-6">
-      <a href="#catalog" class="hover:text-vintage-blue">Каталог</a>
-      <a href="#about" class="hover:text-vintage-blue">О нас</a>
-      <a href="#contact" class="hover:text-vintage-blue">Контакты</a>
+  <!-- Navbar -->
+  <nav class="fixed inset-x-0 top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="#home" class="flex items-center gap-2">
+        <svg class="w-7 h-7 text-vintage-blue" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 100 20 10 10 0 000-20Zm1 5a1 1 0 110 2h-2v2h2a1 1 0 110 2h-2v3a1 1 0 11-2 0V7a1 1 0 011-1h3Z"/></svg>
+        <span class="font-serif text-xl font-semibold">Vintage Treasures</span>
+      </a>
+      <button id="menuBtn" class="md:hidden p-2 rounded hover:bg-cream" aria-label="Открыть меню">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div id="menu" class="hidden md:flex items-center gap-6">
+        <a href="#catalog" class="hover:text-vintage-blue">Каталог</a>
+        <a href="#about" class="hover:text-vintage-blue">О нас</a>
+        <a href="#contact" class="hover:text-vintage-blue">Контакты</a>
+      </div>
     </div>
-  </div>
-  <div id="mobileMenu" class="md:hidden hidden border-t border-gray-100">
-    <div class="px-4 py-3 space-y-2">
-      <a href="#catalog" class="block hover:text-vintage-blue">Каталог</a>
-      <a href="#about" class="block hover:text-vintage-blue">О нас</a>
-      <a href="#contact" class="block hover:text-vintage-blue">Контакты</a>
+    <div id="mobileMenu" class="md:hidden hidden border-t border-gray-100">
+      <div class="px-4 py-3 space-y-2">
+        <a href="#catalog" class="block py-2 hover:text-vintage-blue">Каталог</a>
+        <a href="#about" class="block py-2 hover:text-vintage-blue">О нас</a>
+        <a href="#contact" class="block py-2 hover:text-vintage-blue">Контакты</a>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
 
-<!-- Hero -->
-<section id="home" class="pt-24 pb-20 text-center hero-pattern">
-  <h1 class="text-4xl md:text-5xl font-serif mb-4">Коллекция винтажной посуды</h1>
-  <p class="text-warm-gray text-lg max-w-xl mx-auto">
-    Элегантные предметы сервировки — от фарфора до серебра. Найдите своё идеальное сокровище.
-  </p>
-</section>
+  <!-- Hero -->
+  <header id="home" class="pt-24 md:pt-28 bg-gradient-to-br from-cream to-white hero-pattern">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 grid md:grid-cols-2 gap-10 items-center">
+      <div class="fade-in">
+        <h1 class="font-serif text-4xl md:text-6xl leading-tight">
+          Винтажная посуда
+          <span class="block text-vintage-blue">для современного дома</span>
+        </h1>
+        <p class="mt-6 text-lg text-warm-gray max-w-xl">Тарелки, чайные сервизы, стекло и серебро — тщательно отобранные предметы с историей. Просматривай каталог, смотри цены и оформляй заказ через Telegram.</p>
+        <div class="mt-8 flex flex-col sm:flex-row gap-4">
+          <a href="#catalog" class="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-vintage-blue text-white hover:bg-soft-blue transition">Перейти в каталог</a>
+          <a href="#about" class="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-vintage-blue text-vintage-blue hover:bg-vintage-blue hover:text-white transition">Наша история</a>
+        </div>
+      </div>
+      <div class="fade-in">
+        <div class="relative">
+          <div class="bg-soft-blue/20 rounded-3xl p-8 rotate-1 shadow-soft">
+            <img src="https://images.unsplash.com/photo-1542367597-8849eb1a3107?q=80&w=1400&auto=format&fit=crop" alt="Винтажная сервировка" class="rounded-2xl w-full object-cover aspect-[4/3]">
+          </div>
+          <div class="absolute -bottom-5 -right-5 bg-white rounded-xl p-3 shadow-soft">
+            <span class="text-sm text-warm-gray">Кураторская коллекция</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
 
-<!-- Footer -->
-<footer class="bg-charcoal text-white py-6 text-center text-sm">
-  © 2025 Vintage Treasures. Все права защищены.
-</footer>
+  <!-- Catalog Controls -->
+  <section id="catalog" class="py-14">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-end gap-4 md:gap-6 justify-between">
+        <div>
+          <h2 class="font-serif text-3xl md:text-4xl">Каталог</h2>
+          <p class="text-warm-gray mt-2">Фильтруй по категориям и ищи по названию.</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+          <div class="flex items-center gap-2 bg-cream rounded-lg p-1 w-full sm:w-auto">
+            <button data-filter="all" class="filter-btn px-3 py-2 rounded-md text-sm md:text-base bg-white">Все</button>
+            <button data-filter="plates" class="filter-btn px-3 py-2 rounded-md text-sm md:text-base">Тарелки</button>
+            <button data-filter="tea" class="filter-btn px-3 py-2 rounded-md text-sm md:text-base">Чайные сервизы</button>
+            <button data-filter="glass" class="filter-btn px-3 py-2 rounded-md text-sm md:text-base">Стекло</button>
+            <button data-filter="silver" class="filter-btn px-3 py-2 rounded-md text-sm md:text-base">Серебро</button>
+          </div>
+          <input id="searchInput" type="search" placeholder="Поиск по названию…" class="w-full sm:w-64 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-vintage-blue focus:border-transparent" />
+        </div>
+      </div>
 
-<script>
-  document.getElementById('menuBtn').addEventListener('click', () => {
-    document.getElementById('mobileMenu').classList.toggle('hidden');
-  });
-</script>
+      <!-- Grid -->
+      <div id="grid" class="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
 
+      <!-- Empty state -->
+      <div id="emptyState" class="hidden mt-12 text-center text-warm-gray">Ничего не найдено. Попробуйте изменить фильтр или поиск.</div>
+
+      <!-- Load more (optional, stays hidden for now) -->
+      <div class="mt-8 text-center hidden"><button id="loadMore" class="px-6 py-2 rounded-lg border hover:bg-cream">Показать ещё</button></div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="py-16 bg-cream">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 items-center">
+      <div class="fade-in">
+        <h3 class="font-serif text-3xl md:text-4xl mb-4">Наша история</h3>
+        <p class="text-warm-gray text-lg leading-relaxed">Мы собираем винтажную посуду уже более 20 лет. В коллекции — тарелки, чайные сервизы, стекло и редкие серебряные предметы. Каждый экспонат отобран вручную за эстетику, происхождение и состояние.</p>
+        <div class="mt-6 grid grid-cols-2 gap-6">
+          <div class="text-center bg-white p-6 rounded-2xl shadow-soft">
+            <div class="font-serif text-3xl text-vintage-blue">500+</div>
+            <div class="text-warm-gray">Позиции за всё время</div>
+          </div>
+          <div class="text-center bg-white p-6 rounded-2xl shadow-soft">
+            <div class="font-serif text-3xl text-vintage-blue">20+</div>
+            <div class="text-warm-gray">Лет экспертизы</div>
+          </div>
+        </div>
+      </div>
+      <div class="fade-in">
+        <img src="https://images.unsplash.com/photo-1601042879364-f3947d3f8c10?q=80&w=1400&auto=format&fit=crop" class="rounded-3xl shadow-soft w-full object-cover aspect-[4/3]" alt="Винтажная коллекция на полках" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 items-start">
+      <div class="fade-in">
+        <h3 class="font-serif text-3xl md:text-4xl mb-4">Связаться</h3>
+        <p class="text-warm-gray text-lg">Вопросы по наличию, состоянию и доставке — пишите нам в Telegram.</p>
+        <a id="contactTg" href="#" target="_blank" class="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-vintage-blue text-white hover:bg-soft-blue transition">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M9.036 15.28l-.376 5.3c.537 0 .769-.231 1.046-.508l2.51-2.41 5.205 3.82c.954.527 1.636.251 1.896-.885l3.437-16.09.001-.002c.305-1.424-.513-1.98-1.449-1.63L1.12 9.679C-.279 10.22-.258 11.02.88 11.37l5.77 1.8 13.403-8.436c.631-.384 1.206-.172.732.212"/></svg>
+          Написать в Telegram
+        </a>
+      </div>
+      <form class="fade-in bg-cream p-6 rounded-2xl">
+        <h4 class="font-serif text-2xl mb-4">Быстрый запрос</h4>
+        <div class="grid gap-4">
+          <input id="inqName" type="text" placeholder="Ваше имя" class="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-vintage-blue focus:border-transparent" required>
+          <input id="inqItem" type="text" placeholder="Какой предмет интересует (название)" class="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-vintage-blue focus:border-transparent">
+          <textarea id="inqMsg" placeholder="Сообщение" rows="4" class="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-vintage-blue focus:border-transparent"></textarea>
+          <button id="inqBtn" type="button" class="w-full px-6 py-3 rounded-lg bg-vintage-blue text-white hover:bg-soft-blue">Отправить в Telegram</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-charcoal text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-4 gap-8">
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <svg class="w-7 h-7 text-vintage-blue" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20Z"/></svg>
+          <span class="font-serif text-xl font-semibold">Vintage Treasures</span>
+        </div>
+        <p class="text-gray-400">Кураторская подборка винтажной посуды: тарелки, чайные сервизы, стекло, серебро.</p>
+      </div>
+      <div>
+        <h5 class="font-medium mb-3">Навигация</h5>
+        <ul class="space-y-2 text-gray-400">
+          <li><a href="#home" class="hover:text-vintage-blue">Главная</a></li>
+          <li><a href="#catalog" class="hover:text-vintage-blue">Каталог</a></li>
+          <li><a href="#about" class="hover:text-vintage-blue">О нас</a></li>
+          <li><a href="#contact" class="hover:text-vintage-blue">Контакты</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5 class="font-medium mb-3">Категории</h5>
+        <ul class="space-y-2 text-gray-400">
+          <li>Тарелки</li>
+          <li>Чайные сервизы</li>
+          <li>Стекло</li>
+          <li>Серебро</li>
+        </ul>
+      </div>
+      <div>
+        <h5 class="font-medium mb-3">Связь</h5>
+        <a id="footerTg" href="#" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15">
+          Telegram
+        </a>
+      </div>
+    </div>
+    <div class="mt-8 text-center text-gray-500 text-sm">© <span id="year"></span> Vintage Treasures. Все права защищены.</div>
+  </footer>
+
+  <!-- Product Card Template (JS fills in) -->
+  <template id="productCardTpl">
+    <article class="group bg-white rounded-2xl overflow-hidden shadow-soft hover:shadow-lg transition">
+      <div class="relative bg-gradient-to-br from-cream to-soft-blue/10">
+        <img class="w-full aspect-square object-cover" alt="" />
+        <div class="absolute top-3 left-3">
+          <span class="status badge inline-block px-2 py-1 text-xs rounded bg-white/90"></span>
+        </div>
+      </div>
+      <div class="p-4">
+        <h3 class="font-serif text-lg line-clamp-2"></h3>
+        <p class="text-sm text-warm-gray mt-1 line-clamp-2 desc"></p>
+        <div class="mt-3 flex items-center justify-between">
+          <div class="price font-medium"></div>
+          <button class="orderBtn px-3 py-2 rounded-lg bg-vintage-blue text-white hover:bg-soft-blue text-sm">Заказать</button>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <!-- Scripts -->
+  <script>
+    const qs = (s, el=document) => el.querySelector(s);
+    const qsa = (s, el=document) => [...el.querySelectorAll(s)];
+
+    // Mobile menu
+    qs('#menuBtn').addEventListener('click', () => qs('#mobileMenu').classList.toggle('hidden'));
+
+    // Helper: Build Telegram link
+    function tgLinkFromProduct(p) {
+      const lines = [
+        'Здравствуйте! Хочу заказать товар:',
+        `• ${p.title}`,
+        p.sku ? `• Артикул: ${p.sku}` : '',
+        p.price ? `• Цена: ${CURRENCY}${p.price}` : '',
+        '',
+        'Подскажите, пожалуйста, по наличию и доставке.'
+      ].filter(Boolean).join('\n');
+      return `https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent(lines)}`;
+    }
+
+    function tgLinkFromInquiry(name, item, msg) {
+      const lines = [
+        'Здравствуйте!',
+        name ? `Меня зовут ${name}.` : '',
+        item ? `Интересует: ${item}` : '',
+        msg ? `Сообщение: ${msg}` : '',
+      ].filter(Boolean).join('\n');
+      return `https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent(lines)}`;
+    }
+
+    // Contacts TG buttons
+    function setTgLinks() {
+      const url = `https://t.me/${TELEGRAM_USERNAME}`;
+      ['contactTg','footerTg'].forEach(id => { const a = qs('#' + id); if (a) a.href = url; });
+    }
+
+    // Fade-in on scroll
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px'});
+    qsa('.fade-in').forEach(el=>io.observe(el));
+
+    // Render catalog
+    let ALL = [];
+    let FILTER = 'all';
+    let SEARCH = '';
+
+    async function loadProducts() {
+      try {
+        const res = await fetch('content/products.json', { cache: 'no-store' });
+        const data = await res.json();
+        ALL = Array.isArray(data.products) ? data.products : [];
+        render();
+      } catch (e) {
+        console.error('Не удалось загрузить товары:', e);
+        qs('#grid').innerHTML = '<div class="col-span-full text-red-600">Ошибка загрузки каталога. Проверьте content/products.json</div>';
+      }
+    }
+
+    function formatPrice(p) { return p ? `${CURRENCY}${Number(p).toLocaleString('ru-RU')}` : '—'; }
+
+    function render() {
+      const grid = qs('#grid');
+      grid.innerHTML = '';
+      const term = SEARCH.trim().toLowerCase();
+      const items = ALL.filter(p => (FILTER === 'all' || p.category === FILTER))
+                       .filter(p => !term || (p.title||'').toLowerCase().includes(term));
+
+      qs('#emptyState').classList.toggle('hidden', items.length !== 0);
+
+      const tpl = qs('#productCardTpl');
+      items.forEach(p => {
+        const node = tpl.content.cloneNode(true);
+        const img = node.querySelector('img');
+        img.src = p.image || 'https://placehold.co/800x800?text=Vintage';
+        img.alt = p.title || 'Товар';
+        node.querySelector('h3').textContent = p.title || 'Без названия';
+        node.querySelector('.desc').textContent = p.short || '';
+        node.querySelector('.price').textContent = formatPrice(p.price);
+        const badge = node.querySelector('.status');
+        const status = p.status || 'available';
+        badge.textContent = status === 'sold' ? 'Продано' : 'В наличии';
+        badge.className = 'status badge inline-block px-2 py-1 text-xs rounded ' + (status==='sold' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700');
+        const btn = node.querySelector('.orderBtn');
+        btn.addEventListener('click', () => {
+          window.open(tgLinkFromProduct(p), '_blank');
+        });
+        grid.appendChild(node);
+      });
+    }
+
+    // Filters
+    qsa('.filter-btn').forEach(b => b.addEventListener('click', () => {
+      qsa('.filter-btn').forEach(x => x.classList.remove('bg-white'));
+      b.classList.add('bg-white');
+      FILTER = b.dataset.filter;
+      render();
+    }));
+
+    // Search
+    qs('#searchInput').addEventListener('input', (e) => { SEARCH = e.target.value; render(); });
+
+    // Inquiry form -> Telegram
+    qs('#inqBtn').addEventListener('click', () => {
+      const name = qs('#inqName').value.trim();
+      const item = qs('#inqItem').value.trim();
+      const msg  = qs('#inqMsg').value.trim();
+      const url = tgLinkFromInquiry(name, item, msg);
+      window.open(url, '_blank');
+    });
+
+    // Init
+    setTgLinks();
+    loadProducts();
+    qs('#year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
